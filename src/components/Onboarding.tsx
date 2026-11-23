@@ -6,7 +6,7 @@ import { saveEnrollment, saveRoadmap } from "../lib/studentData";
 import { useAuth } from "../context/AuthContext";
 import type { PreparationLevel } from "../types";
 
-export default function Onboarding({ onCreated }: { onCreated: () => void }) {
+export default function Onboarding({ onCreated, isFirstEnrollment }: { onCreated: () => Promise<void>; isFirstEnrollment: boolean }) {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -35,14 +35,14 @@ export default function Onboarding({ onCreated }: { onCreated: () => void }) {
         targetDate,
         dailyHours,
         preparationLevel: level,
-        isPrimary: true
+        isPrimary: isFirstEnrollment
       });
       await saveRoadmap(user.uid, {
         enrollmentId: enrollment.id,
         examId: exam.id,
         tasks: createStarterRoadmap(exam.id)
       });
-      onCreated();
+      await onCreated();
       navigate("/", { replace: true });
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : "Could not save your examination preferences.");
@@ -52,8 +52,8 @@ export default function Onboarding({ onCreated }: { onCreated: () => void }) {
   };
 
   return <main className="onboarding-screen"><div className="onboarding-card">
-    <div className="step-kicker">STEP 1 OF 1 · PERSONALIZE YOUR PREPARATION</div>
-    <div className="onboarding-heading"><div className="icon-tile"><Target/></div><div><h1>Choose your target examination</h1><p>Your roadmap starts with the exam you want to achieve.</p></div></div>
+    <div className="step-kicker">{isFirstEnrollment ? "STEP 1 OF 1 · PERSONALIZE YOUR PREPARATION" : "ADD AN EXAMINATION · PERSONALIZE THIS TARGET"}</div>
+    <div className="onboarding-heading"><div className="icon-tile"><Target/></div><div><h1>{isFirstEnrollment ? "Choose your target examination" : "Add another examination"}</h1><p>Your roadmap starts with the exam you want to achieve.</p></div></div>
     <form onSubmit={submit} className="onboarding-form">
       <label>Target examination<select value={examId} onChange={(event) => setExamId(event.target.value)}>{EXAMS.map((item) => <option key={item.id} value={item.id}>{item.shortName} — {item.name}</option>)}</select></label>
       <div className="form-grid">
