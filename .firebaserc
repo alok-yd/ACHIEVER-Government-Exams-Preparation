@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "achiever-9db94"
+  },
+  "targets": {
+    "achiever-9db94": {
+      "hosting": {
+        "achiever-9db94-e3f10": [
+          "achiever-9db94-e3f10"
+        ]
+      }
+    }
+  }
+}
