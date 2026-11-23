@@ -89,8 +89,8 @@ export default function AuthScreen() {
 
   const sendOtp = () => void withAuth(async () => {
     if (!auth) return;
-    const normalized = phone.replace(/[\\s()-]/g, "");
-    if (!/^\\+[1-9]\\d{7,14}$/.test(normalized)) {
+    const normalized = phone.replace(/[\s()-]/g, "");
+    if (!/^\+[1-9]\d{7,14}$/.test(normalized)) {
       throw new Error("Enter your phone number with country code, for example +919876543210.");
     }
     verifier.current?.clear();
@@ -102,7 +102,7 @@ export default function AuthScreen() {
 
   const verifyOtp = () => void withAuth(async () => {
     if (!confirmation) throw new Error("Request a new OTP first.");
-    if (!/^\\d{6}$/.test(otp.trim())) throw new Error("Enter the 6-digit OTP.");
+    if (!/^\d{6}$/.test(otp.trim())) throw new Error("Enter the 6-digit OTP.");
     await confirmation.confirm(otp.trim());
   });
 
@@ -139,7 +139,7 @@ export default function AuthScreen() {
         <label>Mobile number<input type="tel" autoComplete="tel" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="+919876543210" disabled={!!confirmation} /></label>
         <div id="achiever-phone-recaptcha" />
         {!confirmation ? <button className="primary-button full-width" type="button" onClick={sendOtp} disabled={busy}>{busy ? "Sending OTP…" : "Send verification code"}</button> : <>
-          <label>6-digit OTP<input inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={otp} onChange={(event) => setOtp(event.target.value.replace(/\\D/g, "").slice(0, 6))} placeholder="Enter OTP" /></label>
+          <label>6-digit OTP<input inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={otp} onChange={(event) => setOtp(event.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="Enter OTP" /></label>
           <button className="primary-button full-width" type="button" onClick={verifyOtp} disabled={busy || otp.length !== 6}>{busy ? "Verifying…" : "Verify and continue"}</button>
           <button className="text-button" type="button" onClick={() => { setConfirmation(null); setOtp(""); verifier.current?.clear(); verifier.current = null; }}>Use a different number</button>
         </>}
