@@ -36,11 +36,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(firebaseConfigured);
 
   useEffect(() => {
-    if (!auth) {
+    const authInstance = auth;
+    if (!authInstance) {
       setLoading(false);
       return;
     }
-    return onAuthStateChanged(auth, async (nextUser) => {
+    return onAuthStateChanged(authInstance, async (nextUser) => {
       if (!nextUser) {
         setUser(null);
         setLoading(false);
@@ -50,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (usesPassword && !nextUser.emailVerified) {
         setUser(null);
         setLoading(false);
-        await signOut(auth);
+        await signOut(authInstance);
         return;
       }
       try {
